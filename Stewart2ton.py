@@ -23,28 +23,28 @@ platform.plot()
 
 
 # Calculate Platform Forces given Actuator Forces
-F_actuators = [100, 100, 100, 200, 100, 30]  # Example actuator forces
-F_platform = platform.getPlatformForces(F_actuators)
+# F_actuators = [100, 100, 100, 200, 100, 30]  # Example actuator forces
+# F_platform = platform.getPlatformForces(F_actuators)
 
 # Calculate Actuator Forces given Platform Forces
-F_platform = [900, 900, 900, 900, 900, 900]  # Example platform forces
-F_actuators = platform.getActuatorForces(F_platform)
-print(F_actuators)
+# F_platform = [900, 900, 900, 900, 900, 900]  # Example platform forces
+# F_actuators = platform.getActuatorForces(F_platform)
+# print(F_actuators)
 
 # Get Force Ellipsoid
-force_ellipsoid = platform.getForceEllipsoid()
-print("Force Ellipsoid:", force_ellipsoid)
+# force_ellipsoid = platform.getForceEllipsoid()
+# print("Force Ellipsoid:", force_ellipsoid)
 
 # Get Local Design Index (LDI)
 # Local design index for Force transmittability (actuator design)
-ldi = platform.getLDI()
-print("ldi", ldi)
+# ldi = platform.getLDI()
+# print("ldi", ldi)
 
 # Define workspace limits [x_min, x_max, y_min, y_max, z_min, z_max]
 workspace_limits = [-368, 368, -315, 315, -252, 252]
 RPY = [22, 21, 25]  # Fixed orientation (roll, pitch, yaw)
 N = 10  # Number of points in each dimension
-choice = 4  # Choice of index calculation (1: Singular Value Index, etc.)
+choice = 2  # Choice of index calculation (1: Singular Value Index, etc.)
 # self.options = {
 #     1: self.getSingularValueIndex, # measures drive capability of the platform, finds max q_dot under unitary x_dot
 #     2: self.getManipulabilityIndex,# Measures manipulability of manipulator, can be used to optimize it's configuration
@@ -65,36 +65,6 @@ position = [0, 0, 1500]  # Fixed position
 workspace_indices_orientation = platform.getIndexWorkspaceOrientation(
     position, orientation_limits, N, choice)
 print("Workspace Indices (Orientation):", workspace_indices_orientation)
-
-
-# Extract data for plotting
-x = [point[0] for point in workspace_indices_orientation]
-y = [point[1] for point in workspace_indices_orientation]
-z = [point[2] for point in workspace_indices_orientation]
-values = [point[3] for point in workspace_indices_orientation]
-
-# Create 3D scatter plot
-fig = go.Figure(data=[go.Scatter3d(
-    x=x, y=y, z=z, mode='markers',
-    marker=dict(
-        size=5,
-        color=values,  # Set color to the index values
-        colorscale='Viridis',  # Choose a colorscale
-        colorbar=dict(title='Index Value')
-    )
-)])
-
-# Set plot title and axis labels
-fig.update_layout(
-    title='Workspace Indices (Orientation)',
-    scene=dict(
-        xaxis_title='Roll',
-        yaxis_title='Pitch',
-        zaxis_title='Yaw'
-    )
-)
-# Show plot
-fig.show()
 
 
 # @title Plotly
@@ -123,7 +93,7 @@ fig = go.Figure(data=go.Volume(
 ))
 
 fig.update_layout(
-    title='Worspace Position',
+    title='Workspace Position',
     scene=dict(
         xaxis=dict(nticks=N, range=[x_min, x_max]),
         yaxis=dict(nticks=N, range=[y_min, y_max]),
@@ -179,8 +149,8 @@ fig.show()
 # workspace_limits = [-0.5, 0.5, -0.5, 0.5, 0.1, 0.6]
 # orientation_limits = [-10, 10, -10, 10, -10, 10]
 # Define number of points for dimension
-N_pos = 10  # Number of points in each dimension
-N_orient = 10  # Number of points in each dimension
+N_pos = 100  # Number of points in each dimension
+N_orient = 100  # Number of points in each dimension
 
 # Choosing N_pos and N_orient too high may result in a computational expensive operation, suggested values ( N_pos=10, N_orient=10 )
 # for practical usage there is the need to filter the data. Suggestion: filter by local condition index value AND by distance between data points (from scipy.spatial.distance import cdist).
@@ -189,3 +159,5 @@ singularities_task_space = platform.getSingularityWorkspace(
     workspace_limits, orientation_limits, N_pos, N_orient)  # find singularities in all space
 
 print("Singularities in task space:", singularities_task_space)
+
+platform.plotSingularity(singularities_task_space)
